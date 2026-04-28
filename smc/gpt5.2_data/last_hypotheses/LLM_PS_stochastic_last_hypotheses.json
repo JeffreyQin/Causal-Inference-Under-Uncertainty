@@ -1,0 +1,144 @@
+{
+  "runs": [
+    {
+      "run_number": 1,
+      "last_hypothesis": "def predict(key, box):\n    return key.number is not None and key.number == box.number",
+      "solved": true,
+      "trials": 7,
+      "opened": 5
+    },
+    {
+      "run_number": 2,
+      "last_hypothesis": "def predict(key, box) -> bool:\n    # Evidence strongly suggests the working rule is:\n    # numbered keys open boxes with the same number of shapes (regardless of color/shape).\n    if key.number is not None:\n        return key.number == box.number\n\n    # Non-numbered keys with arbitrary shapes appear to be decoys (or at least unreliable).\n    # As a weak fallback, allow a pure color match only for keys that have no number and no shape.\n    if key.shape is None and key.color == box.color:\n        return True\n\n    return False",
+      "solved": true,
+      "trials": 7,
+      "opened": 5
+    },
+    {
+      "run_number": 3,
+      "last_hypothesis": "def predict(key, box) -> bool:\n    # Primary rule: keys with numbers open the box whose shape-count matches that number.\n    if key.number is not None:\n        return key.number == box.number\n\n    # Fallback rule: keys without numbers open boxes matching their color (as in the demo).\n    return key.color == box.color",
+      "solved": true,
+      "trials": 17,
+      "opened": 5
+    },
+    {
+      "run_number": 4,
+      "last_hypothesis": "def predict(key, box) -> bool:\n    if key.number is None:\n        return False\n    return key.number == box.number",
+      "solved": true,
+      "trials": 19,
+      "opened": 5
+    },
+    {
+      "run_number": 5,
+      "last_hypothesis": "def predict(key, box) -> bool:\n    return key.number is not None and key.number == box.number",
+      "solved": true,
+      "trials": 10,
+      "opened": 5
+    },
+    {
+      "run_number": 6,
+      "last_hypothesis": "def predict(key, box) -> bool:\n    # Based on evidence, the working rule is that the correct key matches\n    # the box by the box's number of shapes (box.number).\n    return key.number is not None and key.number == box.number",
+      "solved": true,
+      "trials": 9,
+      "opened": 5
+    },
+    {
+      "run_number": 7,
+      "last_hypothesis": "def predict(key, box) -> bool:\n    return key.number is not None and key.number == box.number",
+      "solved": true,
+      "trials": 19,
+      "opened": 5
+    },
+    {
+      "run_number": 8,
+      "last_hypothesis": "def predict(key, box) -> bool:\n    return key.number is not None and key.number == box.number",
+      "solved": true,
+      "trials": 22,
+      "opened": 5
+    },
+    {
+      "run_number": 9,
+      "last_hypothesis": "def predict(key, box) -> bool:\n    # A key can open a box if it matches the box by number of shapes (numeric keys),\n    # or if it matches the box by color (as demonstrated by the teacher).\n    if key.number is not None and key.number == box.number:\n        return True\n    if key.color == box.color:\n        return True\n    return False",
+      "solved": true,
+      "trials": 14,
+      "opened": 5
+    },
+    {
+      "run_number": 10,
+      "last_hypothesis": "def predict(key, box) -> bool:\n    if key.number is not None and key.number == box.number:\n        return True\n    return key.color == box.color",
+      "solved": true,
+      "trials": 10,
+      "opened": 5
+    },
+    {
+      "run_number": 11,
+      "last_hypothesis": "def predict(key, box) -> bool:\n    return (key.number is not None) and (key.number == box.number)",
+      "solved": true,
+      "trials": 10,
+      "opened": 5
+    },
+    {
+      "run_number": 12,
+      "last_hypothesis": "def predict(key, box) -> bool:\n    # Primary rule suggested by evidence: numbered keys open boxes with the same number of shapes.\n    if key.number is not None:\n        return key.number == box.number\n\n    # If a key has no number but has a shape, it opens the box with the same shape.\n    if key.shape is not None:\n        return key.shape == box.shape\n\n    # Fallback: match by color.\n    return key.color == box.color",
+      "solved": true,
+      "trials": 9,
+      "opened": 5
+    },
+    {
+      "run_number": 13,
+      "last_hypothesis": "def predict(key, box) -> bool:\n    return key.number is not None and key.number == box.number",
+      "solved": true,
+      "trials": 14,
+      "opened": 5
+    },
+    {
+      "run_number": 14,
+      "last_hypothesis": "def predict(key, box) -> bool:\n    # A key opens a box if the key's number matches the box's number of shapes.\n    return key.number is not None and key.number == box.number",
+      "solved": true,
+      "trials": 13,
+      "opened": 5
+    },
+    {
+      "run_number": 15,
+      "last_hypothesis": "def predict(key, box) -> bool:\n    # Keys open boxes by matching the box's number of shapes.\n    return key.number is not None and key.number == box.number",
+      "solved": true,
+      "trials": 17,
+      "opened": 5
+    },
+    {
+      "run_number": 16,
+      "last_hypothesis": "def predict(key, box) -> bool:\n    if key.number is not None:\n        return key.number == box.number\n    return key.color == box.color",
+      "solved": true,
+      "trials": 10,
+      "opened": 5
+    },
+    {
+      "run_number": 17,
+      "last_hypothesis": "def predict(key, box) -> bool:\n    # Evidence strongly supports that only numbered keys open boxes, and only when the numbers match.\n    if key.number is None:\n        return False\n    return key.number == box.number",
+      "solved": true,
+      "trials": 8,
+      "opened": 5
+    },
+    {
+      "run_number": 18,
+      "last_hypothesis": "def predict(key, box) -> bool:\n    return key.number is not None and key.number == box.number",
+      "solved": true,
+      "trials": 20,
+      "opened": 5
+    },
+    {
+      "run_number": 19,
+      "last_hypothesis": "def predict(key, box) -> bool:\n    # Evidence strongly supports that most boxes open with a numbered key\n    # whose number matches the box's number of shapes.\n    #\n    # Special case: the white (diamond) box appears to require the orange \"4\" key,\n    # not a diamond-shaped key or a white numbered key.\n    if box.id == \"white\":\n        return (key.number == 4) and (key.color == \"orange\")\n\n    return (key.number is not None) and (key.number == box.number)",
+      "solved": true,
+      "trials": 9,
+      "opened": 5
+    },
+    {
+      "run_number": 20,
+      "last_hypothesis": "def predict(key, box) -> bool:\n    return key.number is not None and key.number == box.number",
+      "solved": true,
+      "trials": 14,
+      "opened": 5
+    }
+  ]
+}
