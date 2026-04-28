@@ -1,6 +1,6 @@
-from sp_baseline import SPBaseline
+from llm_ps import SPBaseline
 from environment import Environment
-from llm.llm import LLM
+from llm.llm_modified import LLM
 
 import csv
 import os
@@ -18,14 +18,9 @@ class Logger:
         if self.logging:
             print(log_str)
 
-smc_config = {
-    "num_particles": 1,
-    "init_theta": (19, 1),
-    "ess_threshold": 0.5,
-    "act_mode": "sample",
-}
+
 llm_config = {
-    "model": "deepseek-chat",#"qwen2.5-72b-instruct"
+    "model": "deepseek-chat",
     "temperature": 0.1,
     "max_tokens": 512,
 }
@@ -36,7 +31,31 @@ patch_config = {
 
 max_trials = 70
 num_run = 100
-save_dir = r"training_results\nips_qwen\per_trial_deepseek32_1particle"
+opening_prob = 0.7
+
+save_dir = r"training_results\nips_llm\deepseekchatV32__cond_full_noisy0.7__baseline"
+
+
+def log_run_error(save_dir, run_idx, error, timestamp):
+    os.makedirs(save_dir, exist_ok=True)
+    path = os.path.join(save_dir, f"run_errors_{timestamp}.csv")
+    file_exists = os.path.exists(path)
+
+    with open(path, "a", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(
+            f,
+            fieldnames=["run_number", "error_type", "error_message"],
+        )
+        if not file_exists:
+            writer.writeheader()
+
+        writer.writerow({
+            "run_number": run_idx + 1,
+            "error_type": type(error).__name__,
+            "error_message": str(error),
+        })
+
+    print(f"[ERROR LOGGED] Run {run_idx + 1}: {type(error).__name__}: {error}")
 
 
 def save_history_to_csv(history, csv_path):
@@ -63,17 +82,19 @@ def save_history_to_csv(history, csv_path):
 
 
 def save_trials_histogram(trials_per_run, save_dir, model_name, timestamp):
-    if not trials_per_run:
-        print("No trials data to plot.")
+    valid_trials = [t for t in trials_per_run if t is not None]
+
+    if not valid_trials:
+        print("No valid trials data to plot.")
         return
 
     os.makedirs(save_dir, exist_ok=True)
     plot_path = os.path.join(
         save_dir,
-        f"{model_name}_summary_{timestamp}_trials_to_open_5_boxes_histogram.png"
+        f"{model_name}_summary_{timestamp}_trials_to_open_5_boxes_histogram.png",
     )
 
-    counts = Counter(trials_per_run)
+    counts = Counter(valid_trials)
     x = sorted(counts.keys())
     y = [counts[v] for v in x]
 
@@ -81,7 +102,7 @@ def save_trials_histogram(trials_per_run, save_dir, model_name, timestamp):
     plt.bar(x, y)
     plt.xlabel("Trial number to open 5 boxes")
     plt.ylabel("Total number of runs")
-    plt.title("Histogram of trials needed to open 5 boxes across runs")
+    plt.title("Histogram of trials needed to open 5 boxes across successful/recorded runs")
     plt.tight_layout()
     plt.savefig(plot_path, dpi=200)
     plt.close()
@@ -100,6 +121,16 @@ def patch_spbaseline_with_early_stop(
             temperature=self.temperature,
             max_tokens=self.max_tokens,
         )
+
+    def _generate(self, evidence):
+        if hasattr(self.llm, "generate"):
+            return self.llm.generate(evidence)
+        return self.llm.generate_once(evidence)
+
+    def _refine(self, evidence, old_h):
+        if hasattr(self.llm, "refine"):
+            return self.llm.refine(evidence, old_h)
+        return self.llm.refine_once(evidence, old_h)
 
     def run_per_trial_llm(self, max_trials: int) -> dict:
         self.trial_count = 0
@@ -126,21 +157,24 @@ def patch_spbaseline_with_early_stop(
             early_stop_triggered = False
 
             if self.trial_count == 0:
-                self.hypothesis, h_name = self.llm.generate([])
+                self.hypothesis, h_name = self._generate([])
             else:
                 accepted = False
 
                 while True:
-                    self.hypothesis, new_name = self.llm.refine(self.evidence, self.hypothesis)
+                    self.hypothesis, new_name = self._refine(
+                        self.evidence,
+                        self.hypothesis,
+                    )
                     refine_attempts += 1
 
                     if self._accept_h():
                         accepted = True
                         break
 
-                    if refine_attempts > self.max_refine_fails_per_trial:
+                    if refine_attempts >= self.max_refine_fails_per_trial:
                         self.logger.log(
-                            f"[EARLY STOP] refine failed more than "
+                            f"[EARLY STOP] refine failed "
                             f"{self.max_refine_fails_per_trial} times in this trial"
                         )
                         self._early_stop = True
@@ -162,9 +196,6 @@ def patch_spbaseline_with_early_stop(
                         "early_stop_triggered": early_stop_triggered,
                         "early_stop_reason": self._early_stop_reason,
                     })
-
-                    print(f"END OF TRIAL {self.trial_count}: EARLY STOP")
-                    print(f"Opened boxes so far: {len(self.env.success_pairs)}")
                     break
 
             self.logger.log(f"{self.hypothesis}")
@@ -212,36 +243,45 @@ def patch_spbaseline_with_early_stop(
     baseline.model_name = baseline.llm.model
     baseline.temperature = baseline.llm.temperature
     baseline.max_tokens = baseline.llm.max_tokens
-
     baseline.max_refine_fails_per_trial = max_refine_fails_per_trial
 
     baseline._fresh_llm = MethodType(_fresh_llm, baseline)
+    baseline._generate = MethodType(_generate, baseline)
+    baseline._refine = MethodType(_refine, baseline)
     baseline.run = MethodType(run_per_trial_llm, baseline)
+
     return baseline
 
 
-if __name__ == '__main__':
-    NUM_RUNS = num_run
+if __name__ == "__main__":
     os.makedirs(save_dir, exist_ok=True)
 
     trials_per_run = []
     model_name = llm_config["model"].replace("-", "_")
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    for run_idx in range(NUM_RUNS):
+    for run_idx in range(num_run):
         print("\n" + "#" * 80)
-        print(f"START OF RUN {run_idx + 1}/{NUM_RUNS}")
+        print(f"START OF RUN {run_idx + 1}/{num_run}")
         print("#" * 80)
 
-        environment = Environment(include_inspect=False)
+        environment = Environment(
+            opening_prob=opening_prob,
+            include_inspect=False,
+        )
+
         logger = Logger(logging=(run_idx == 0))
+
+        llm = LLM(
+            model=llm_config["model"],
+            temperature=llm_config["temperature"],
+            max_tokens=llm_config["max_tokens"],
+        )
 
         baseline = SPBaseline(
             env=environment,
+            llm=llm,
             logger=logger,
-            model_name=llm_config["model"],
-            temperature=llm_config["temperature"],
-            max_tokens=llm_config["max_tokens"],
         )
 
         baseline = patch_spbaseline_with_early_stop(
@@ -249,8 +289,32 @@ if __name__ == '__main__':
             max_refine_fails_per_trial=patch_config["max_refine_fails_per_trial"],
         )
 
-        result = baseline.run(max_trials=max_trials)
-        history = result["history"]
+        try:
+            result = baseline.run(max_trials=max_trials)
+            history = result["history"]
+
+        except Exception as e:
+            log_run_error(save_dir, run_idx, e, timestamp)
+
+            partial_history = getattr(baseline, "history", [])
+
+            if partial_history:
+                for row in partial_history:
+                    row["run_number"] = run_idx + 1
+                    row["solved"] = False
+                    row["final_opened"] = len(baseline.env.success_pairs)
+                    row["run_early_stop"] = True
+                    row["run_early_stop_reason"] = f"{type(e).__name__}: {str(e)}"
+
+                failed_save_path = os.path.join(
+                    save_dir,
+                    f"{model_name}_FAILED_run_{run_idx + 1:03d}_{timestamp}.csv",
+                )
+                save_history_to_csv(partial_history, failed_save_path)
+
+            trials_per_run.append(None)
+            print(f"[SKIP RUN] Run {run_idx + 1} failed, moving to next run.")
+            continue
 
         for row in history:
             row["run_number"] = run_idx + 1
@@ -261,13 +325,13 @@ if __name__ == '__main__':
 
         run_save_path = os.path.join(
             save_dir,
-            f"{model_name}_per_trial_run_{run_idx + 1:03d}_{timestamp}.csv"
+            f"{model_name}_per_trial_run_{run_idx + 1:03d}_{timestamp}.csv",
         )
 
         save_history_to_csv(history, run_save_path)
         trials_per_run.append(result["trials"])
 
-        print(f"END OF RUN {run_idx + 1}/{NUM_RUNS}")
+        print(f"END OF RUN {run_idx + 1}/{num_run}")
         print(f"Solved: {result['solved']}")
         print(f"Trials recorded: {result['trials']}")
         print(f"Boxes opened: {result['opened']}")

@@ -24,7 +24,7 @@ smc_config = {
     "act_mode": "sample",
     "max_refine_attempts_per_trial": 3,
     "rejuvenate_on_low_ess_only": True,
-    "csv_dir": r"training_results\nips_llm\deepseekchatV32__cond_full_noisy__op_1.0__theta_19_1__p_5__mode_sample__runs_100__trials_70",
+    "csv_dir": r"training_results\nips_llm\deepseekchatV32__cond_full_reliable__op_1.0__theta_19_1__p_5__mode_sample__runs_100__trials_70",
 }
 
 llm_config = {
@@ -34,8 +34,8 @@ llm_config = {
 }
 
 max_trials = 70
-num_runs = 80
-opening_prob = 1.0
+num_runs = 100
+opening_prob = 0.7
 
 
 def format_particle_refine_summary(row, num_particles: int) -> str:

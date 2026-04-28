@@ -2,9 +2,9 @@
   "runs": [
     {
       "run_number": 1,
-      "last_hypothesis": "def predict(key, box) -> bool:\n    return key.number == box.number",
+      "last_hypothesis": "def predict(key, box):\n    return key.number is not None and key.number == box.number",
       "solved": true,
-      "trials": 19,
+      "trials": 7,
       "opened": 5
     },
     {
