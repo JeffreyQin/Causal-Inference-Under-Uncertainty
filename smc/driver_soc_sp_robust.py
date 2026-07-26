@@ -1,6 +1,6 @@
 from environment import Environment
-from llm.llm_modified import LLM
-from smc_sp_modified import Engine
+from smc.llm.llm_robust import LLM
+from smc.smc_sp_robust import Engine
 
 import os
 from datetime import datetime
@@ -24,17 +24,17 @@ smc_config = {
     "act_mode": "sample",
     "max_refine_attempts_per_trial": 3,
     "rejuvenate_on_low_ess_only": True,
-    "csv_dir": r"training_results\nips_llm\deepseekchatV32__cond_full_noisy__op_1.0__theta_19_1__p_5__mode_sample__runs_100__trials_70",
+    "csv_dir": r"training_results\nips_llm_vs2\deepseekchatV32_200_07__op_0.6__theta_19_1__p_5__mode_sample__runs_100__trials_70",
 }
 
 llm_config = {
-    "model": "deepseek-chat",#qwen3.6-plus
-    "temperature": 0.1,
-    "max_tokens": 512,
+    "model": "deepseek-chat",#qwen3.6-plus deepseek-chat
+    "temperature": 0.6,
+    "max_tokens": 200,
 }
 
 max_trials = 70
-num_runs = 80
+num_runs = 20
 opening_prob = 1.0
 
 

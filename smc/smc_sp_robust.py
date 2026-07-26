@@ -11,7 +11,7 @@ from typing import Dict, List, Optional, Tuple
 
 from environment import Environment, Key, Box
 from llm.code import check_valid_program, execute_hypothesis_code
-from llm.llm_modified import LLM
+from smc.llm.llm_robust import LLM
 
 
 @dataclass
@@ -332,6 +332,9 @@ class Engine:
         })
 
     def _append_trial_csv_row(self, trial_no: int, key: Key, box: Box, outcome: bool) -> None:
+        selected_hypothesis = ""
+        if self.current_trial_selected_particle_index is not None:
+            selected_hypothesis = self.particles[self.current_trial_selected_particle_index].hypothesis
         row = {
             "run_number": self.run_number,
             "trial_no": trial_no,
@@ -346,6 +349,7 @@ class Engine:
             "ess": self.current_trial_ess,
             "selected_particle_index": self.current_trial_selected_particle_index,
             "selected_particle_name": self.current_trial_selected_particle_name,
+            "selected_hypothesis": selected_hypothesis,
             "rejuvenated_this_trial": self.current_trial_rejuvenated,
             "run_aborted": self.run_aborted,
             "run_abort_reason": self.run_abort_reason,

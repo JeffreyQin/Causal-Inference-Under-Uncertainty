@@ -70,8 +70,8 @@ class LLM:
                 {"role": "user", "content": user_prompt}
             ],
             reasoning_effort="low",
-            #temperature=self.temperature,
-            #max_tokens=self.max_tokens,
+            temperature=self.temperature,
+            max_tokens=self.max_tokens,
         )
         return self._clean_response(response.choices[0].message.content)
     def generate(self, evidence: List) -> str:
