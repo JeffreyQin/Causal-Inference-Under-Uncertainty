@@ -1,0 +1,67 @@
+{
+  "created_at": "2026-08-18T08:07:16",
+  "theta_values": [
+    [
+      1,
+      1
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      1,
+      3
+    ],
+    [
+      2,
+      1
+    ],
+    [
+      3,
+      1
+    ],
+    [
+      4,
+      1
+    ],
+    [
+      5,
+      1
+    ],
+    [
+      6,
+      1
+    ],
+    [
+      9,
+      1
+    ],
+    [
+      15,
+      1
+    ],
+    [
+      19,
+      1
+    ]
+  ],
+  "p_gen_values": [
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9
+  ],
+  "true_prior": 0.02,
+  "num_runs_per_configuration": 100,
+  "max_trials": 70,
+  "num_particles": 30,
+  "opening_prob": 1.0,
+  "random_seed": null,
+  "num_configurations": 99
+}
