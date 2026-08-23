@@ -1,0 +1,11 @@
+Reliable adults
+SoC-Full:      theta=(1,3),  p_gen=0.7
+SoC-Rel:       theta=(1,3),  p_gen=0.1
+SoC-Gen:       theta=(19,1), p_gen=0.7
+SoC-Lesioned:  theta=(19,1), p_gen=0.1
+
+Unreliable-key adults
+SoC-Full:      theta=(1,3),  p_gen=0.8
+SoC-Rel:       theta=(1,3),  p_gen=0.1
+SoC-Gen:       theta=(19,1), p_gen=0.8
+SoC-Lesioned:  theta=(19,1), p_gen=0.1
