@@ -1,4 +1,4 @@
-"""Fit reliable-adult learning data to the 17 August 2026 sweep outputs."""
+"""Fit reliable-adult learning data to autonomous-SMC sweep outputs."""
 
 from __future__ import annotations
 
@@ -184,7 +184,7 @@ def plot_heatmap(results: pd.DataFrame) -> None:
     axis.set_ylabel(r"reliability $\theta$")
     axis.set_title(
         "Reliable adults: Mean NLL by (theta, gen)\n"
-        f"sweep_17_8_2026; true prior = {TARGET_TRUE_PRIOR:.2f}",
+        f"{MODEL_RESULTS_DIR.name}; true prior = {TARGET_TRUE_PRIOR:.2f}",
         fontweight="bold",
     )
 

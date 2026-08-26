@@ -4,7 +4,7 @@ Unlike ``method3_human_data_leading_fitting.py``, this script does not load or
 replay participant actions.  At every trial ``smc_soc.Engine`` selects its own
 action, and the environment supplies the outcome.
 
-Outputs (under ``training_results/sweep_17_8_2026``):
+Outputs (under ``training_results/sweep_25_08_2026``):
   * one ``theta_*__gen_*__trueprior_*.csv`` file per configuration, containing
     empirical P(n boxes open) by trial. Each file is written immediately after
     that configuration completes.
@@ -62,7 +62,7 @@ NUM_PARTICLES = 30
 OPENING_PROB = 1.0
 RANDOM_SEED: int | None = None    # Set an integer to make a run reproducible.
 
-OUTPUT_DIR = PROJECT_ROOT / "training_results" / "sweep_17_8_2026"
+OUTPUT_DIR = PROJECT_ROOT / "training_results" / "sweep_25_08_2026"
 
 
 class Logger:
