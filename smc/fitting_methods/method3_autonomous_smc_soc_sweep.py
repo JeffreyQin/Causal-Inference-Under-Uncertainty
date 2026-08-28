@@ -60,9 +60,9 @@ NUM_RUNS = 100
 MAX_TRIALS = 70
 NUM_PARTICLES = 30
 OPENING_PROB = 1.0
-RANDOM_SEED: int | None = None    # Set an integer to make a run reproducible.
+RANDOM_SEED: int | None = 42      # Fixed for reproducible sweep results.
 
-OUTPUT_DIR = PROJECT_ROOT / "training_results" / "sweep_25_08_2026"
+OUTPUT_DIR = PROJECT_ROOT / "training_results" / "sweep_28_08_2026_seed42"
 
 
 class Logger:

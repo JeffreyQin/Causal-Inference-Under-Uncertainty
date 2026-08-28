@@ -1,4 +1,4 @@
-"""Plot marginal GPT-5.2 likelihood profiles across theta and p_gen.
+"""Plot marginal GPT-5.2 NLL profiles across theta and p_gen.
 
 The theta profile averages each run's NLL across all p_gen values, while the
 p_gen profile averages each run's NLL across all theta values. The final mean
