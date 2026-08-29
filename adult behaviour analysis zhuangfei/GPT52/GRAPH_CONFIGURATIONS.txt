@@ -1,0 +1,121 @@
+GPT-5.2 PROCESSING SCRIPTS AND GRAPH CONFIGURATIONS
+==================================================
+
+Naming convention
+-----------------
+The six analysis scripts use: <usage>_gpt52_<metric>.py
+
+1. plot_gpt52_heatmap_nll.py
+   Usage: calculate and plot NLL sweep heatmaps.
+
+2. plot_gpt52_profiles_nll.py
+   Usage: calculate and plot marginal NLL profiles.
+
+3. select_gpt52_best_models_nll.py
+   Usage: select the best model for each GPT-5.2 run using NLL.
+
+4. select_gpt52_best_models_aic.py
+   Usage: select the best model for each GPT-5.2 run using AIC.
+
+5. plot_gpt52_heatmap_aic.py
+   Usage: calculate and plot the two-dimensional AIC sweep heatmap.
+
+6. plot_gpt52_profiles_aic.py
+   Usage: calculate and plot marginal AIC profiles.
+
+The separate summarise_gpt52_runs.py script prepares GPT-5.2 JSON logs as
+experiments_gpt5.2.csv. It is data preparation, not an NLL/AIC analysis.
+
+
+Shared sweep configuration
+--------------------------
+Sweep: training_results/sweep_17_8_2026
+true_prior: 0.02 (fixed and therefore not counted in k)
+theta values:
+  (1,1), (1,2), (1,3), (2,1), (3,1), (4,1), (5,1), (6,1),
+  (9,1), (15,1), (19,1)
+p_gen values:
+  0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9
+Total configurations: 11 x 9 = 99
+
+
+NLL graphs
+----------
+
+Graph: gpt5.2_best_model_counts.png
+Created by: select_gpt52_best_models_nll.py
+Selection rule: choose the lowest NLL for each GPT-5.2 run.
+
+Reliable-key candidate configurations:
+  SoC-Lesioned: theta=(19,1), p_gen=0.1
+  SoC-Rel:      theta=(1,3),  p_gen=0.1
+  SoC-Gen:      theta=(19,1), p_gen=0.7
+  SoC-Full:     theta=(1,3),  p_gen=0.7
+
+Unreliable-key-observed candidate configurations:
+  SoC-Lesioned: theta=(19,1), p_gen=0.1
+  SoC-Rel:      theta=(1,3),  p_gen=0.1
+  SoC-Gen:      theta=(19,1), p_gen=0.8
+  SoC-Full:     theta=(1,3),  p_gen=0.8
+
+Graph: gpt5.2_<sweep>_heatmap.png
+Created by: plot_gpt52_heatmap_nll.py
+Configuration set: all 99 sweep configurations listed above.
+Cell value: mean total NLL per GPT-5.2 run.
+
+Graph: likelihood_surface/mean_nll_marginal_profiles.png
+Created by: plot_gpt52_profiles_nll.py
+Configuration set: all 99 sweep configurations.
+Left panel: each p_gen averaged over all 11 theta values.
+Right panel: each theta averaged over all 9 p_gen values.
+Error bars: normal-approximation 95% CI across the 20 GPT-5.2 runs.
+
+
+AIC definition and model regions
+--------------------------------
+AIC = 2*NLL + 2*k
+
+SoC-Lesioned region: theta=(19,1), p_gen=0.1; k=0
+SoC-Rel region:      theta!=(19,1), p_gen=0.1; k=1
+SoC-Gen region:      theta=(19,1), p_gen>0.1; k=1
+SoC-Full region:     theta!=(19,1), p_gen>0.1; k=2
+
+
+AIC graphs
+----------
+
+Graph: gpt5.2_sweep_17_8_2026_aic_heatmap.png
+Created by: plot_gpt52_heatmap_aic.py
+Configuration set: all 99 sweep configurations.
+Cell value: 2*(mean total NLL per run) + 2*k for that cell's region.
+
+Graph: unreliable_keys_observed/17aug_smc_prob_dist_aic/
+       gpt5.2_best_model_aic_counts.png
+Created by: select_gpt52_best_models_aic.py
+Selection rule: choose the lowest individual-run AIC. Lesioned, Rel, and Gen
+use their AIC-region minima; Full uses the NLL-fitted Full configuration:
+  SoC-Lesioned: theta=(19,1), p_gen=0.1; k=0; surface mean AIC=55.6548
+  SoC-Rel:      theta=(6,1),  p_gen=0.1; k=1; surface mean AIC=60.4596
+  SoC-Gen:      theta=(19,1), p_gen=0.4; k=1; surface mean AIC=41.7943
+  SoC-Full:     theta=(1,3),  p_gen=0.8; k=2; surface mean AIC=75.3936
+
+Graph: reliable_keys/17aug_smc_prob_dist_aic/
+       gpt5.2_best_model_aic_counts.png
+Created by: select_gpt52_best_models_aic.py
+Selection rule: choose the lowest individual-run AIC. Lesioned, Rel, and Gen
+use their AIC-region minima; Full uses the NLL-fitted Full configuration
+(which is also the reliable-key AIC-region minimum):
+  SoC-Lesioned: theta=(19,1), p_gen=0.1; k=0; surface mean AIC=46.9336
+  SoC-Rel:      theta=(6,1),  p_gen=0.1; k=1; surface mean AIC=95.8302
+  SoC-Gen:      theta=(19,1), p_gen=0.4; k=1; surface mean AIC=45.5343
+  SoC-Full:     theta=(1,3),  p_gen=0.7; k=2; surface mean AIC=36.7754
+
+Graph: likelihood_surface/mean_aic_marginal_profiles.png
+Created by: plot_gpt52_profiles_aic.py
+Configuration set: all 99 sweep configurations with the region-specific k above.
+Left panel: each p_gen AIC averaged over all 11 theta values.
+Right panel: each theta AIC averaged over all 9 p_gen values.
+Error bars: normal-approximation 95% CI across the 20 GPT-5.2 runs.
+
+Supporting CSV: likelihood_surface/run_aic_surface.csv
+Contains all 20 runs x 99 configurations = 1,980 run/configuration scores.

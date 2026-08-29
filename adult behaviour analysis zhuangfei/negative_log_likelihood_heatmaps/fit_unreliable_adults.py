@@ -159,7 +159,7 @@ def plot_heatmap(results: pd.DataFrame) -> None:
     axis.set_ylabel(r"reliability $\theta$")
     axis.set_title(
         "Unreliable-key adults: Mean NLL by (theta, gen)\n"
-        f"sweep_17_8_2026; true prior = {TARGET_TRUE_PRIOR:.2f}",
+        f"{MODEL_RESULTS_DIR.name}; true prior = {TARGET_TRUE_PRIOR:.2f}",
         fontweight="bold",
     )
 
