@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import importlib.util
 from pathlib import Path
 
@@ -111,6 +112,28 @@ def plot_aic_heatmap(results: pd.DataFrame, path: Path) -> None:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--sweep", default="sweep_17_8_2026")
+    parser.add_argument(
+        "--condition", choices=("unreliable", "partial"), default="unreliable"
+    )
+    args = parser.parse_args()
+
+    global ADULT_CSV, MODEL_RESULTS_DIR, OUTPUT_DIR, CONDITION_LABEL
+    folder = (
+        "unreliable_kes_partially_observed"
+        if args.condition == "partial"
+        else "unreliable_keys_observed"
+    )
+    ADULT_CSV = GPT_ROOT / folder / "experiments_gpt5.2.csv"
+    MODEL_RESULTS_DIR = PROJECT_ROOT / "training_results" / args.sweep
+    OUTPUT_DIR = GPT_ROOT / folder / "17aug_smc_prob_dist_aic"
+    CONDITION_LABEL = (
+        "Partially observed unreliable-key GPT-5.2 runs"
+        if args.condition == "partial"
+        else "Unreliable-key GPT-5.2 runs"
+    )
+
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     output_csv = OUTPUT_DIR / f"gpt5.2_{MODEL_RESULTS_DIR.name}_mean_aic.csv"
     output_heatmap = OUTPUT_DIR / f"gpt5.2_{MODEL_RESULTS_DIR.name}_aic_heatmap.png"

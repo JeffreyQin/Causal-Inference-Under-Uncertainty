@@ -36,10 +36,16 @@ SITUATIONS = {
         "sweep_25_08_2026",
         "25Aug_smc_prob_dist_aic",
     ),
+    "partial_17aug": (
+        "partial",
+        "sweep_17_8_2026",
+        "17aug_smc_prob_dist_aic",
+    ),
 }
 CONDITION_FOLDERS = {
     "reliable": "reliable_keys",
     "unreliable": "unreliable_keys_observed",
+    "partial": "unreliable_kes_partially_observed",
 }
 
 
@@ -162,12 +168,16 @@ def run_condition(condition: str, sweep_name: str, output_folder: str) -> None:
     profiles.to_csv(output_dir / "mean_aic_marginal_profiles.csv", index=False)
     run_scores.to_csv(output_dir / "run_aic_surface.csv", index=False)
 
-    label = "Reliable keys" if condition == "reliable" else "Unreliable keys observed"
+    labels = {
+        "reliable": "Reliable keys",
+        "unreliable": "Unreliable keys observed",
+        "partial": "Unreliable keys partially observed",
+    }
     plot_profiles(
         theta_profile,
         pgen_profile,
         output_dir / "mean_aic_marginal_profiles.png",
-        f"{label}: {sweep_name} AIC profiles",
+        f"{labels[condition]}: {sweep_name} AIC profiles",
     )
     print(f"{condition}/{sweep_name}: saved AIC profiles to {output_dir}")
 

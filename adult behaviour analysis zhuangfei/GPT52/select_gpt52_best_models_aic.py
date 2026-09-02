@@ -51,6 +51,15 @@ RELIABLE_AIC_MODEL_SPECS = {
     "SoC-Full": ((1, 3), 0.7),
 }
 
+# Configurations fitted by NLL on the partially observed sweep. AIC then
+# compares these same candidates per run with their model-specific penalties.
+PARTIAL_NLL_MODEL_SPECS = {
+    "SoC-Lesioned": ((19, 1), 0.1),
+    "SoC-Rel": ((2, 1), 0.1),
+    "SoC-Gen": ((19, 1), 0.9),
+    "SoC-Full": ((5, 1), 0.8),
+}
+
 
 def load_nll_module():
     """Load the established data parsing and NLL functions without duplicating them."""
@@ -113,7 +122,7 @@ def main() -> None:
     )
     parser.add_argument("--sweep", type=Path, default=DEFAULT_SWEEP)
     parser.add_argument(
-        "--condition", choices=("all", "reliable", "unreliable"), default="all"
+        "--condition", choices=("all", "reliable", "unreliable", "partial"), default="all"
     )
     args = parser.parse_args()
 
@@ -130,6 +139,12 @@ def main() -> None:
             "output": DEFAULT_OUTPUT_DIR,
             "specs": UNRELIABLE_AIC_MODEL_SPECS,
             "title": "Best-fitting model per GPT-5.2 unreliable-key run (AIC; NLL Full)",
+        },
+        "partial": {
+            "data": GPT52_ROOT / "unreliable_kes_partially_observed" / "experiments_gpt5.2.csv",
+            "output": GPT52_ROOT / "unreliable_kes_partially_observed" / "17aug_smc_prob_dist_aic",
+            "specs": PARTIAL_NLL_MODEL_SPECS,
+            "title": "Best-fitting model per GPT-5.2 partially observed run (AIC; NLL configs)",
         },
     }
     names = conditions if args.condition == "all" else [args.condition]

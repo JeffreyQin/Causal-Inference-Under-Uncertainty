@@ -26,7 +26,11 @@ def run_condition(condition: str, sweep_name: str, output_subdir: str | None) ->
         folder = "reliable_keys"
         script = "fit_reliable_adultsl.py"
     else:
-        folder = "unreliable_keys_observed"
+        folder = (
+            "unreliable_kes_partially_observed"
+            if condition == "partial"
+            else "unreliable_keys_observed"
+        )
         script = "fit_unreliable_adults.py"
     module = load_module(
         f"{condition}_nll_heatmap",
@@ -47,7 +51,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sweep", default="sweep_17_8_2026")
     parser.add_argument(
-        "--condition", choices=("all", "reliable", "unreliable"), default="all"
+        "--condition", choices=("all", "reliable", "unreliable", "partial"), default="all"
     )
     parser.add_argument("--output-subdir")
     args = parser.parse_args()
