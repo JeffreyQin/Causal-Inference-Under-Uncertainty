@@ -25,7 +25,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--sweep", default="sweep_17_8_2026")
     parser.add_argument(
-        "--condition", choices=("all", "reliable", "unreliable"), default="all"
+        "--condition", choices=("all", "reliable", "unreliable", "partial"), default="all"
     )
     parser.add_argument("--output-subdir")
     args = parser.parse_args()
@@ -46,6 +46,20 @@ def main() -> None:
             "folder": "unreliable_keys_observed",
             "models": module.CONDITIONS["unreliable"]["models"],
             "title": "Best-fitting model per GPT-5.2 unreliable-key run (NLL)",
+        },
+        "partial": {
+            "data": GPT_ROOT / "unreliable_kes_partially_observed" / "experiments_gpt5.2.csv",
+            "folder": "unreliable_kes_partially_observed",
+            # The partially observed sweep minimum is theta=(5,1), p_gen=0.8.
+            # Retain the established Rel/Gen/Lesioned controls, but use this
+            # dataset's fitted sweep result for SoC-Full.
+            "models": {
+                **module.CONDITIONS["unreliable"]["models"],
+                "SoC-Full": ((5, 1), 0.8),
+                "SoC-Rel": ((2, 1), 0.1),
+                "SoC-Gen": ((19, 1), 0.9),
+            },
+            "title": "Best-fitting model per GPT-5.2 partially observed run (NLL)",
         },
     }
     names = conditions if args.condition == "all" else [args.condition]

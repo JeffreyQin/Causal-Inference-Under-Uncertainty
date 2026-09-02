@@ -25,6 +25,7 @@ GPT52_ROOT = PROJECT_ROOT / "adult behaviour analysis zhuangfei" / "GPT52"
 CONDITION_FOLDERS = {
     "reliable": "reliable_keys",
     "unreliable": "unreliable_keys_observed",
+    "partial": "unreliable_kes_partially_observed",
 }
 SITUATIONS = {
     "reliable_17aug": ("reliable", "sweep_17_8_2026", "17aug_smc_prob_dist"),
@@ -43,6 +44,11 @@ SITUATIONS = {
         "unreliable",
         "sweep_25_08_2026",
         "25Aug_smc_prob_dist",
+    ),
+    "partial_17aug": (
+        "partial",
+        "sweep_17_8_2026",
+        "17aug_smc_prob_dist",
     ),
 }
 TRUE_PRIOR = 0.02
@@ -200,12 +206,16 @@ def run_condition(condition: str, sweep_name: str, output_folder: str) -> None:
     pgen_profile = summarise_marginal(run_scores, "p_gen")
     profiles = pd.concat([pgen_profile, theta_profile], ignore_index=True)
     profiles.to_csv(output_dir / "mean_nll_marginal_profiles.csv", index=False)
-    label = "Reliable keys" if condition == "reliable" else "Unreliable keys observed"
+    labels = {
+        "reliable": "Reliable keys",
+        "unreliable": "Unreliable keys observed",
+        "partial": "Unreliable keys partially observed",
+    }
     plot_marginal_profiles(
         theta_profile,
         pgen_profile,
         output_dir / "mean_nll_marginal_profiles.png",
-        f"{label}: {sweep_name}",
+        f"{labels[condition]}: {sweep_name}",
     )
     print(f"{condition}/{sweep_name}: saved marginal profiles to {output_dir}")
 

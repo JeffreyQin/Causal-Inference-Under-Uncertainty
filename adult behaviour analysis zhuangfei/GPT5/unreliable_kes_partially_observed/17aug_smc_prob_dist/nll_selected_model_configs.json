@@ -1,0 +1,30 @@
+{
+  "SoC-Lesioned": {
+    "theta": [
+      19,
+      1
+    ],
+    "p_gen": 0.1
+  },
+  "SoC-Rel": {
+    "theta": [
+      1,
+      2
+    ],
+    "p_gen": 0.1
+  },
+  "SoC-Gen": {
+    "theta": [
+      19,
+      1
+    ],
+    "p_gen": 0.9
+  },
+  "SoC-Full": {
+    "theta": [
+      1,
+      2
+    ],
+    "p_gen": 0.9
+  }
+}
