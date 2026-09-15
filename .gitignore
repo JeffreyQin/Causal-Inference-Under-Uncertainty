@@ -1,6 +1,7 @@
 /thinking_outside_the_box-llms
 /documents
 /venv
+/.venv
 .env
 __pycache__
 .vscode
@@ -13,3 +14,4 @@ __pycache__
 /adult behaviour analysis zhuangfei/GPT51
 /adult behaviour analysis zhuangfei/GPT5/unreliable_kes_partially_observed/test_grid
 /training_results/sweep_28_08_2026_seed42
+/training_results/additional feature directional analysis

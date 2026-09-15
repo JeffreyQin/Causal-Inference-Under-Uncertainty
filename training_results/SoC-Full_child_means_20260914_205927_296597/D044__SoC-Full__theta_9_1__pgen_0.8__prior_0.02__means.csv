@@ -1,0 +1,2 @@
+Child_ID,SoC_variant,theta,p_gen,true_prior,simulations,mean_unique_key_box_pairs,valid_runs_unique_key_box_pairs,mean_revisit_rate,valid_runs_revisit_rate,mean_attempts_before_abandoning_color_matching,valid_runs_attempts_before_abandoning_color_matching
+D044,SoC-Full,"(9, 1)",0.8,0.02,100,25.67,100,0.050973127540979817,100,1.15,100
